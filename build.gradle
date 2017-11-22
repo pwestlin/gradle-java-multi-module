@@ -1,0 +1,45 @@
+allprojects {
+    task hello {
+        doLast {
+            task -> println "I'm $task.project.name"
+        }
+    }
+
+    group = 'nu.westlin.gradle'
+    version = '0.1-SNAPSHOT'
+
+    apply plugin: "java"
+    apply plugin: "maven"
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    dependencies {
+        testCompile "junit:junit:4+"
+    }
+}
+
+
+project(':child') {
+    dependencies {
+        compile project(':parent')
+/*
+        compile project(':parent') {
+            exclude group: "nu.westlin.gradle", module: "annotations"
+        }
+*/
+    }
+
+    configurations {
+      compile.exclude group: "nu.westlin.gradle", module: "annotations"
+      runtime.exclude group: "nu.westlin.gradle", module: "annotations"
+    }
+}
+
+project(':parent') {
+    dependencies {
+        compile project(':annotations')
+    }
+}
